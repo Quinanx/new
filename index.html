@@ -1,0 +1,460 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Google Play — Aryan Guddy New App</title>
+
+<link rel="manifest" id="manifest-link">
+<meta name="theme-color" content="#1a73e8">
+
+<style>
+  :root{
+    --bg:#f1f3f4; --card:#fff; --accent:#1a73e8; --dark:#202124; --muted:#5f6368;
+    --radius:12px; --shadow:0 8px 24px rgba(0,0,0,.08);
+    font-family:Roboto,Arial,sans-serif;
+  }
+  html,body{height:100%;margin:0;background:var(--bg);color:var(--dark)}
+  .topbar{background:#fff;display:flex;align-items:center;gap:12px;padding:12px 16px;border-bottom:1px solid #e8eaed;position:sticky;top:0;z-index:8}
+  .search{flex:1;background:#f8f9fa;padding:10px;border:1px solid #e6e8ea;border-radius:8px;display:flex;gap:8px;align-items:center}
+  .search input{border:0;background:transparent;outline:0;font-size:14px;width:100%}
+  .wrap{max-width:980px;margin:18px auto;padding:0 16px;}
+  .store-main{display:flex;gap:20px}
+  .left{width:340px}
+  .app-card{background:var(--card);padding:18px;border-radius:14px;box-shadow:var(--shadow)}
+  .icon{width:96px;height:96px;border-radius:20px;overflow:hidden}
+  .icon img{width:100%;height:100%;border-radius:20px;object-fit:cover}
+  h1{margin:6px 0 2px;font-size:18px}
+  .meta{color:var(--muted);font-size:13px;margin-bottom:12px}
+  .install-btn{background:var(--accent);color:#fff;padding:10px 16px;border-radius:10px;font-weight:600;border:none;cursor:pointer}
+  .secondary{background:#fff;border:1px solid #dcdcdc;padding:10px 14px;border-radius:10px;cursor:pointer}
+  .ss{width:94px;height:168px;border-radius:10px;background:#f1f1f1;display:flex;justify-content:center;align-items:center;color:#777;font-size:12px}
+  .right{flex:1}
+  .card{background:var(--card);padding:16px;border-radius:14px;box-shadow:var(--shadow);margin-bottom:14px}
+  footer{max-width:980px;margin:20px auto 60px;padding:0 16px;color:#777;font-size:13px}
+  @media(max-width:880px){.store-main{flex-direction:column}.left{width:100%}}
+
+  /* Pac-Man screen */
+  #pacmanScreen{display:none;position:fixed;inset:0;background:#000;z-index:99999;align-items:center;justify-content:center;flex-direction:column}
+  #pacTopBar{position:absolute;top:8px;left:8px;right:8px;display:flex;justify-content:space-between;align-items:center;color:#fff;z-index:100000}
+  #pacCanvas{background:#000;display:block;border-radius:12px}
+  .pac-btn{background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.12);padding:8px 12px;border-radius:8px;cursor:pointer}
+  #scoreBox{color:#fff;font-weight:700}
+  #pacFooter{position:absolute;bottom:16px;color:#fff;font-size:13px}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <b>Google Play</b>
+  <div class="search"><input placeholder="Search apps & games"></div>
+</div>
+
+<div class="wrap">
+  <div class="store-main">
+
+    <div class="left">
+      <div class="app-card">
+        <div style="display:flex;gap:16px">
+          <div class="icon">
+            <img src="https://tse1.mm.bing.net/th/id/OIP.b2KSpfWX0DThaZBAfZV0dQHaFO?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3" alt="app icon">
+          </div>
+          <div>
+            <h1>Aryan Guddy New App</h1>
+            <div class="meta">4.8 ★ • Social • 10M+</div>
+
+            <button id="installBtn" class="install-btn">Install</button>
+            <button id="openBtn" class="secondary" style="display:none">Open</button>
+            <button id="downloadBtn" class="secondary">Download HTML</button>
+            <button id="playPacmanBtn" class="secondary">Play Pac-Man</button>
+          </div>
+        </div>
+
+        <div style="display:flex;gap:10px;margin-top:18px">
+          <div class="ss">Screenshot</div>
+          <div class="ss">Screenshot</div>
+          <div class="ss">Screenshot</div>
+        </div>
+
+        <p style="color:#777;margin-top:12px;font-size:13px">
+          Works only on Chrome Android (HTTPS or localhost).  
+        </p>
+      </div>
+    </div>
+
+    <div class="right">
+      <div class="card">
+        <h3>About this app</h3>
+        <p style="color:#777;line-height:1.5">
+          Aryan Guddy New App — demo PWA that installs like a real Play Store app.
+          Runs standalone with no browser UI after installation.
+        </p>
+      </div>
+
+      <div class="card">
+        <h3>Permissions</h3>
+        <ul style="color:#777;line-height:1.6">
+          <li>Offline caching</li>
+          <li>No tracking</li>
+          <li>No external JS</li>
+        </ul>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- Pac-Man overlay -->
+<div id="pacmanScreen" role="dialog" aria-modal="true">
+  <div id="pacTopBar">
+    <div id="scoreBox">Score: 0</div>
+    <div>
+      <button id="restartBtn" class="pac-btn">Restart</button>
+      <button id="closePac" class="pac-btn">Close</button>
+    </div>
+  </div>
+
+  <canvas id="pacCanvas" width="480" height="480" aria-label="Pac-Man game"></canvas>
+  <div id="pacFooter">Use arrow keys or swipe to move. Collect all pellets.</div>
+</div>
+
+<footer>Demo single-file Play Store PWA with Pac-Man</footer>
+
+<script>
+/* ------------------ Manifest ------------------ */
+const manifestObj = {
+  name: "Aryan Guddy New App",
+  short_name: "GuddyApp",
+  start_url: "./?homescreen=1",
+  display: "standalone",
+  theme_color: "#1a73e8",
+  background_color: "#ffffff",
+  icons: [
+    {
+      src: "https://tse1.mm.bing.net/th/id/OIP.b2KSpfWX0DThaZBAfZV0dQHaFO?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
+      sizes: "192x192",
+      type: "image/png",
+      purpose: "any maskable"
+    },
+    {
+      src: "https://tse1.mm.bing.net/th/id/OIP.b2KSpfWX0DThaZBAfZV0dQHaFO?cb=ucfimg2&ucfimg=1&rs=1&pid=ImgDetMain&o=7&rm=3",
+      sizes: "512x512",
+      type: "image/png",
+      purpose: "any maskable"
+    }
+  ]
+};
+const mb = new Blob([JSON.stringify(manifestObj)],{type:"application/json"});
+document.getElementById("manifest-link").href = URL.createObjectURL(mb);
+
+/* ------------------ Service Worker ------------------ */
+const swCode = `
+const CACHE_NAME = 'demo-pwa-v1';
+const OFFLINE_URL = './';
+self.addEventListener('install',e=>{
+  self.skipWaiting();
+  e.waitUntil(caches.open(CACHE_NAME).then(cache=>cache.addAll(['/','./?homescreen=1'])));
+});
+self.addEventListener('activate',e=>{e.waitUntil(self.clients.claim());});
+self.addEventListener('fetch',e=>{
+  if (e.request.method !== 'GET') return;
+  e.respondWith(caches.match(e.request).then(r=>r||fetch(e.request).then(res=>{caches.open(CACHE_NAME).then(c=>c.put(e.request,res.clone()));return res;})).catch(()=>caches.match(OFFLINE_URL)));
+});
+`;
+const swBlob = new Blob([swCode],{type:"application/javascript"});
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register(URL.createObjectURL(swBlob)).catch(err=>console.warn('SW register failed', err));
+}
+
+/* ------------------ Install PWA ------------------ */
+let deferredPrompt;
+const installBtn=document.getElementById("installBtn");
+const openBtn=document.getElementById("openBtn");
+const downloadBtn=document.getElementById("downloadBtn");
+const playPacmanBtn=document.getElementById("playPacmanBtn");
+
+window.addEventListener('beforeinstallprompt', e=>{
+  e.preventDefault();
+  deferredPrompt = e;
+  installBtn.style.display='inline-block';
+});
+
+window.addEventListener('appinstalled', ()=> {
+  installBtn.textContent='Installed';
+  installBtn.disabled=true;
+  deferredPrompt = null;
+});
+
+installBtn.addEventListener('click', async ()=>{
+  if(!deferredPrompt){
+    alert('Install prompt not available. Use browser menu → Add to Home screen.');
+    return;
+  }
+  deferredPrompt.prompt();
+  const choice = await deferredPrompt.userChoice;
+  if(choice.outcome === 'accepted'){
+    installBtn.textContent='Installed';
+    installBtn.disabled = true;
+  }
+  deferredPrompt = null;
+});
+
+if (window.matchMedia('(display-mode: standalone)').matches || location.search.includes('homescreen=1')) {
+  installBtn.style.display='none';
+  openBtn.style.display='inline-block';
+}
+openBtn.addEventListener('click', ()=> location.href='./?homescreen=1');
+
+downloadBtn.addEventListener('click', ()=>{
+  const html='<!doctype html>\\n'+document.documentElement.outerHTML;
+  const blob=new Blob([html],{type:'text/html'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download='aryan-guddy-app.html'; a.click(); URL.revokeObjectURL(url);
+});
+
+/* ------------------ Pac-Man game ------------------ */
+/* Minimal functional Pac-Man clone: tile-based, pellets, simple ghosts */
+const pacScreen = document.getElementById('pacmanScreen');
+const canvas = document.getElementById('pacCanvas');
+const ctx = canvas.getContext('2d');
+const scoreBox = document.getElementById('scoreBox');
+const closePac = document.getElementById('closePac');
+const restartBtn = document.getElementById('restartBtn');
+
+const TILE = 24; // size of one cell in px
+const COLS = 20; // canvas 480 / 24 = 20
+const ROWS = 20;
+
+canvas.width = COLS * TILE;
+canvas.height = ROWS * TILE;
+
+let map, player, ghosts, score, pelletsLeft, gameInterval, inputDir, lastMove;
+
+function newGame(){
+  // simple map: 0 empty, 1 wall, 2 pellet
+  map = [];
+  for(let r=0;r<ROWS;r++){
+    const row = [];
+    for(let c=0;c<COLS;c++){
+      if(r===0||c===0||r===ROWS-1||c===COLS-1) row.push(1);
+      else if((r%2===0 && c%2===0) && !(r>7 && r<12 && c>7 && c<12)) row.push(1);
+      else row.push(2);
+    }
+    map.push(row);
+  }
+  // clear a spawn area
+  for(let r=8;r<=11;r++) for(let c=8;c<=11;c++) map[r][c]=0;
+
+  player = {x:1, y:1, dir:{x:0,y:0}, speed:1};
+  ghosts = [
+    {x:COLS-2,y:1, dir:{x:-1,y:0}, color:'red'},
+    {x:1,y:ROWS-2, dir:{x:0,y:-1}, color:'cyan'},
+    {x:COLS-2,y:ROWS-2, dir:{x:-1,y:0}, color:'orange'}
+  ];
+  score = 0;
+  pelletsLeft = 0;
+  for(let r=0;r<ROWS;r++) for(let c=0;c<COLS;c++) if(map[r][c]===2) pelletsLeft++;
+  inputDir = null;
+  lastMove = Date.now();
+  updateScore();
+  if(gameInterval) clearInterval(gameInterval);
+  gameInterval = setInterval(gameTick, 120);
+}
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  // draw pellets and walls
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const v = map[r][c];
+      const px = c*TILE, py = r*TILE;
+      if(v===1){
+        ctx.fillStyle = '#203a5a';
+        ctx.fillRect(px, py, TILE, TILE);
+      } else if(v===2){
+        ctx.fillStyle = '#ffd54f';
+        ctx.beginPath();
+        ctx.arc(px+TILE/2, py+TILE/2, TILE*0.08,0,Math.PI*2);
+        ctx.fill();
+      }
+    }
+  }
+  // draw player (Pac-Man)
+  const pacX = player.x*TILE + TILE/2;
+  const pacY = player.y*TILE + TILE/2;
+  ctx.fillStyle = '#ffd700';
+  const open = Math.abs(Math.sin(Date.now()/120)) * 0.25 + 0.15;
+  let angle = 0;
+  if(player.dir.x===1) angle = 0;
+  else if(player.dir.x===-1) angle = Math.PI;
+  else if(player.dir.y===1) angle = Math.PI/2;
+  else if(player.dir.y===-1) angle = -Math.PI/2;
+  ctx.beginPath();
+  ctx.moveTo(pacX, pacY);
+  ctx.arc(pacX, pacY, TILE*0.45, angle + open*Math.PI, angle - open*Math.PI);
+  ctx.closePath();
+  ctx.fill();
+
+  // ghosts
+  ghosts.forEach(g=>{
+    const gx = g.x*TILE + TILE/2;
+    const gy = g.y*TILE + TILE/2;
+    ctx.fillStyle = g.color;
+    ctx.beginPath();
+    ctx.arc(gx, gy, TILE*0.42, Math.PI, 0);
+    ctx.fill();
+    // body
+    ctx.fillRect(gx-TILE*0.42, gy, TILE*0.84, TILE*0.42);
+    // eyes
+    ctx.fillStyle = '#fff';
+    ctx.beginPath();
+    ctx.arc(gx-TILE*0.12, gy-TILE*0.05, TILE*0.12,0,Math.PI*2);
+    ctx.arc(gx+TILE*0.18, gy-TILE*0.05, TILE*0.12,0,Math.PI*2);
+    ctx.fill();
+    ctx.fillStyle = '#000';
+    ctx.beginPath();
+    ctx.arc(gx-TILE*0.12, gy-TILE*0.05, TILE*0.05,0,Math.PI*2);
+    ctx.arc(gx+TILE*0.18, gy-TILE*0.05, TILE*0.05,0,Math.PI*2);
+    ctx.fill();
+  });
+}
+
+function canMove(x,y){
+  if(x<0||y<0||x>=COLS||y>=ROWS) return false;
+  return map[y][x] !== 1;
+}
+
+function tryMove(obj, dir){
+  const nx = obj.x + dir.x;
+  const ny = obj.y + dir.y;
+  if(canMove(nx, ny)){
+    obj.x = nx; obj.y = ny; obj.dir = dir;
+    return true;
+  }
+  return false;
+}
+
+function gameTick(){
+  // player move based on inputDir
+  if(inputDir){
+    tryMove(player, inputDir);
+  } else if(player.dir.x || player.dir.y){
+    tryMove(player, player.dir);
+  }
+
+  // eat pellet
+  if(map[player.y] && map[player.y][player.x] === 2){
+    map[player.y][player.x] = 0;
+    score += 10;
+    pelletsLeft--;
+    updateScore();
+    if(pelletsLeft<=0){
+      clearInterval(gameInterval);
+      alert('You win! Score: ' + score);
+    }
+  }
+
+  // ghosts simple AI: random turn if possible, else follow current dir
+  ghosts.forEach(g=>{
+    const possible = [];
+    [[1,0],[-1,0],[0,1],[0,-1]].forEach(d=>{
+      const nx = g.x + d[0], ny = g.y + d[1];
+      if(canMove(nx,ny)) possible.push({x:d[0],y:d[1]});
+    });
+    if(possible.length){
+      // bias toward player occasionally
+      let chosen = possible[Math.floor(Math.random()*possible.length)];
+      if(Math.random() < 0.35){
+        // choose direction that reduces distance
+        possible.sort((a,b)=>{
+          const da = Math.hypot((g.x+a.x)-player.x, (g.y+a.y)-player.y);
+          const db = Math.hypot((g.x+b.x)-player.x, (g.y+b.y)-player.y);
+          return da-db;
+        });
+        chosen = possible[0];
+      }
+      tryMove(g, chosen);
+    }
+    // collision with player?
+    if(g.x === player.x && g.y === player.y){
+      clearInterval(gameInterval);
+      alert('Game Over. Score: ' + score);
+    }
+  });
+
+  draw();
+}
+
+function updateScore(){ scoreBox.textContent = 'Score: ' + score; }
+
+/* Input handling: keyboard + touch swipe */
+window.addEventListener('keydown', e=>{
+  if(!pacScreenVisible()) return;
+  if(e.key.includes('Arrow')){
+    e.preventDefault();
+    const d = e.key.replace('Arrow','');
+    if(d==='Left') inputDir = {x:-1,y:0};
+    if(d==='Right') inputDir = {x:1,y:0};
+    if(d==='Up') inputDir = {x:0,y:-1};
+    if(d==='Down') inputDir = {x:0,y:1};
+  }
+});
+
+/* touch swipe */
+let touchStart = null;
+canvas.addEventListener('touchstart', e=>{ touchStart = e.touches[0]; }, {passive:true});
+canvas.addEventListener('touchend', e=>{
+  if(!touchStart) return;
+  const t = e.changedTouches[0];
+  const dx = t.clientX - touchStart.clientX;
+  const dy = t.clientY - touchStart.clientY;
+  if(Math.abs(dx) > Math.abs(dy)){
+    if(dx>20) inputDir = {x:1,y:0};
+    else if(dx<-20) inputDir = {x:-1,y:0};
+  } else {
+    if(dy>20) inputDir = {x:0,y:1};
+    else if(dy<-20) inputDir = {x:0,y:-1};
+  }
+  touchStart = null;
+}, {passive:true});
+
+function pacScreenVisible(){ return getComputedStyle(pacScreen).display !== 'none'; }
+
+playPacmanBtn.addEventListener('click', ()=> {
+  pacScreen.style.display = 'flex';
+  newGame();
+  draw();
+});
+
+closePac.addEventListener('click', ()=>{
+  pacScreen.style.display = 'none';
+  if(gameInterval) clearInterval(gameInterval);
+});
+
+restartBtn.addEventListener('click', ()=> {
+  newGame();
+  draw();
+});
+
+/* ensure canvas is centered and scaled on mobile */
+function resizeCanvasToFit(){
+  const maxW = Math.min(window.innerWidth - 40, 480);
+  const maxH = Math.min(window.innerHeight - 140, 480);
+  const size = Math.min(maxW, maxH);
+  canvas.style.width = size + 'px';
+  canvas.style.height = size + 'px';
+}
+window.addEventListener('resize', resizeCanvasToFit);
+window.addEventListener('orientationchange', ()=> setTimeout(resizeCanvasToFit, 200));
+resizeCanvasToFit();
+
+/* show manual A2HS hint if install not available after load */
+setTimeout(()=> {
+  if(!deferredPrompt) {
+    // no-op: user can use browser menu
+  }
+}, 800);
+
+</script>
+</body>
+</html>
